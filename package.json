@@ -1,0 +1,22 @@
+{
+  "name": "example-durable-chatbot-ts",
+  "version": "1.0.0",
+  "description": "Multi-turn chatbot with durable conversation state — LLM calls are checkpointed so crashes never lose a turn",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "start:crash": "bun run src/index.ts --crash"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@resonatehq/sdk": "^0.9.6"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
