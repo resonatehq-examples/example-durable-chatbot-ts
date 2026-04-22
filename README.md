@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/banner.png" alt="Durable Chatbot — Resonate example" />
+</p>
+
 # Durable Chatbot
 
 A multi-turn chatbot with durable conversation state. Built with Claude (Anthropic) and Resonate.
