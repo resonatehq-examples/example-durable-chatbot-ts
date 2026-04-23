@@ -141,24 +141,13 @@ example-durable-chatbot-ts/
 
 **Lines of code**: ~130 total (including comments). The workflow itself is 10 lines.
 
-## Comparison
+## State lives in the generator
 
-Restate's chatbot ([github](https://github.com/restatedev/examples/tree/main/typescript/end-to-end-applications/chat-bot)) is 1,121 lines across 10 files. It uses Virtual Objects for per-session state, multiple separate task services (reminder, flight-price-watcher), a Slack integration layer, and requires a running Restate server registered with your endpoints.
+Conversation state — the running message history, the current turn's context, any derived signals — is a JavaScript variable inside the generator. Each LLM call is a `yield*` that checkpoints its result; on crash, the generator replays and the checkpointed turns return from the promise store without re-calling the model (and re-paying for tokens).
 
-| | Resonate | Restate |
-|---|---|---|
-| Source files | 3 | 10 |
-| Total LOC | ~130 | ~1,121 |
-| Core concepts to learn | generators, `ctx.run()` | virtual objects, `ctx.run()`, `TerminalError`, service registration |
-| Server required | No (embedded mode) | Yes |
-| Setup | `bun install && bun start` | Install Restate, register services, multiple service processes |
-| State model | Generator-local variables, replayed on crash | Persistent key-value per virtual object |
-
-Where Restate wins: Virtual Objects provide stronger per-key consistency guarantees and built-in state management. If you need stateful entities with concurrent-access protection, Restate's model is a better fit.
-
-Where Resonate wins: For most chatbot use cases, generator-local state is simpler. No state management API to learn. No server to run for the happy path.
+For the common chatbot shape — one conversation per session, long-lived, linear turn progression — this is the right trade. When you need stateful entities with concurrent-access protection (multiple callers racing to mutate the same session under a lock), layer a mutex pattern on top (see [example-distributed-mutex-ts](https://github.com/resonatehq-examples/example-distributed-mutex-ts)) or reach for an external key-value store with its own consistency model.
 
 ## Learn More
 
 - [Resonate documentation](https://docs.resonatehq.io)
-- [Restate chatbot example](https://github.com/restatedev/examples/tree/main/typescript/end-to-end-applications/chat-bot) -- compare for yourself
+- [Distributed mutex pattern](https://github.com/resonatehq-examples/example-distributed-mutex-ts) — serialized access under contention
